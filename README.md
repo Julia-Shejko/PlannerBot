@@ -27,11 +27,11 @@ pipenv shell
 
 
 ### Create the database
- * run the file <span style="color:green">models.py</span>
+ * run the file <span style="color:green">core/models.py</span>
 
 
 ### Start the bot
- * run the file <span style="color:green">bot.py</span>
+ * run the file <span style="color:green">core/bot.py</span>
 
 
 ### Go to Telegram and start using your bot 
@@ -43,17 +43,12 @@ pipenv shell
 
   * **/start** - welcome message
   * Create and save a task when you enter text in the message field
-  * *task_id* **done** - when entering this message, the task is marked as completed
+  * *task_id* **done** - the task is marked as completed
+  * *task_id* **delete** - the task is deleted
   * **/today**, **/t** - list of all tasks for today
+  * **/delete**, **/d** - deleting all completed tasks
 
   
-  
-
-
-
-
-
-
 
 ============================================================
 ### Libraries: 

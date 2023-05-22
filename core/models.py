@@ -4,9 +4,10 @@ from peewee import (SqliteDatabase,
                     DateField,
                     BooleanField,
                     ForeignKeyField)
+from pathlib import Path
 
 
-db = SqliteDatabase('bot.sqlite3')
+db = SqliteDatabase(Path(__file__).resolve().parent.parent/'bot.sqlite3')
 
 
 class User(Model):
