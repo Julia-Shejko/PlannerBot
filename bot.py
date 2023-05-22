@@ -1,7 +1,10 @@
 from datetime import datetime
 from os import getenv
 from models import User, Planner
+from threading import Thread
 import telebot
+import schedule
+import time
 
 
 bot = telebot.TeleBot(getenv('TELEBOT_TOKEN', default=''))
@@ -22,7 +25,8 @@ def start_handler(message):
 def create_all_plans_list(chat_id):
     user = User.get(User.chat_id == chat_id)
     plans = Planner.select().where(Planner.user == user,
-                                   Planner.date == datetime.today())
+                                   Planner.date == datetime.today(),
+                                   Planner.is_done == False)
     message_text = []
 
     for plan in plans:
@@ -36,7 +40,6 @@ def create_all_plans_list(chat_id):
 
 @bot.message_handler(commands=['today', 't'])
 def get_planner_list(message):
-
     bot.send_message(
         message.chat.id,
         create_all_plans_list(message.chat.id) or "‍💫 There are no tasks for today.",
@@ -72,5 +75,25 @@ def create_task_handler(message):
     )
 
 
+def check_notify():
+    for user in User.select():
+        plans = Planner.select().where(Planner.user == user,
+                                       Planner.date == datetime.today())
+        if plans:
+            bot.send_message(
+                user.chat_id,
+                create_all_plans_list(user.chat_id),
+                parse_mode='HTML'
+            )
+
+
+def run_schedule():
+    schedule.every(1).hours.do(check_notify)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 if __name__ == "__main__":
+    Thread(target=run_schedule).start()
     bot.infinity_polling()
