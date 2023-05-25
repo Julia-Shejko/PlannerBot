@@ -9,6 +9,14 @@ import time
 
 bot = telebot.TeleBot(getenv('TELEBOT_TOKEN', default=''))
 
+commands_set = f"List of available bot commands:\n" \
+               f"/start - welcome message\n" \
+               f"/today, /t - list of all tasks for today\n" \
+               f"/delete, /d - deleting all completed tasks\n" \
+               f"Create and save a task when you enter text in the message field\n" \
+               f"task_id done - the task is marked as completed\n" \
+               f"task_id delete - the task is deleted"
+
 
 @bot.message_handler(commands=['start'])
 def start_handler(message):
@@ -18,7 +26,7 @@ def start_handler(message):
         )
     bot.send_message(
         message.chat.id,
-        f"Hello, {message.chat.first_name} {message.chat.last_name or ''}!"
+        f"Hello, {message.chat.first_name} {message.chat.last_name or ''}!\n{commands_set}"
     )
 
 
@@ -87,12 +95,12 @@ def delete_plan_by_number(message):
 
 @bot.message_handler(commands=['delete', 'd'])
 def delete_completed_plans(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     btn1 = types.KeyboardButton("✅ yes, delete all completed tasks")
     btn2 = types.KeyboardButton("❗ no, don't delete all completed tasks")
     markup.add(btn1, btn2)
     bot.send_message(message.chat.id,
-                     text="You really want to delete all completed tasks?\nSelect:", reply_markup=markup)
+                     text="Do you really want to delete all completed tasks?\nSelect:", reply_markup=markup)
 
 
 @bot.message_handler(regexp="delete all completed tasks")
